@@ -1,0 +1,32 @@
+
+:root {
+  --toastify-text-color-light:#1e1e1e
+}
+
+.Toastify__toast-container {
+  @apply sm:w-fit text-[14px] leading-tight
+}
+
+.Toastify__toast {
+  @apply p-0 min-h-fit pr-[5px] py-1 gap-x-4
+}
+
+.Toastify__toast-body {
+  @apply p-0 py-2 px-2 
+}
+
+.Toastify__toast-icon {
+  @apply w-[17px] mr-2
+}
+
+.Toastify__close-button--light {
+  @apply text-red-500
+}
+
+.Toastify__close-button {
+  @apply text-[#1e1e1edc] 
+}
+
+.Toastify__close-button > svg {
+  @apply w-[12px] 
+}
