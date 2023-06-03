@@ -1,1 +1,1 @@
-In version i used reducer to handle all the cartContext states
+In this version i used reducer to handle all the cartContext states
