@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useReducer } from "react"
 import { Outlet } from "react-router-dom"
 import { useAuthContext } from "./AuthContext"
 import { doc, getDoc, setDoc } from "firebase/firestore"
@@ -6,27 +6,30 @@ import { db } from "../../firebase"
 import Loading from "../components/Loading"
 import Swal from "sweetalert2"
 import { toast } from "react-toastify"
+import cartReducer, { cartReducerCases, initialCartState } from "../reducers/cartReducer"
 
 const cartContext = createContext()
 
 export default function CartContext() {
-  let [numOfProducsInCart,setNumOfProducsInCart] = useState()
-  let [isDropDownOpen,setIsDropDownOpen] = useState(false)
-  let [cartProducts,setCartProducts] = useState([])
+
+  let [{numOfProducsInCart,isDropDownOpen,cartProducts},dispatch] = useReducer(cartReducer,initialCartState)
   let user = useAuthContext()
 
   let changeOpenState = ()=> {
-    setIsDropDownOpen(!isDropDownOpen)
+    dispatch({type:cartReducerCases.TOGGLE_DROPDOWN})
   }
 
   let closeDropDownOnBodyClick = (e)=> {
     if(!e.target.classList.contains('dropdown')) {
-      isDropDownOpen && setIsDropDownOpen(false)
+      isDropDownOpen && dispatch({type:cartReducerCases.CLOSE_DROPDOWN})
     }
   }
 
   let addProductToCart = async (product)=> {
     let {imageUrl , name , price , id} = product
+
+    // ADD THE NUMBER OF PRODUCTS IN CARTS IN ALL CASES
+    let numOfCarts = numOfProducsInCart + 1
 
     let newCartProducts = []
 
@@ -37,7 +40,6 @@ export default function CartContext() {
     // IF THE PRODUCT IS NOT IN THE DROPDOWN 
     if(productIndex === -1) {
       newCartProducts = [...cartProducts,{imageUrl,name,price,id,quantity:1}]
-      setCartProducts(newCartProducts)
       toast.success(`${name} added to cart`)
     }
 
@@ -45,12 +47,11 @@ export default function CartContext() {
     else {
       cartProducts[productIndex].quantity += 1
       newCartProducts = cartProducts
-      setCartProducts(newCartProducts)
     }
 
-    // ADD THE NUMBER OF PRODUCTS IN CARTS IN ALL CASES
-    let numOfCarts = numOfProducsInCart + 1
-    setNumOfProducsInCart(numOfCarts)
+    dispatch({type:cartReducerCases.EDIT_PRODUCTS_AND_NUMBER_OF_THEM , payload: {
+      products:newCartProducts , numOfProducts:numOfCarts
+    }})
 
     saveData(newCartProducts,numOfCarts)
 
@@ -65,11 +66,13 @@ export default function CartContext() {
       // EDIT THE PRODUCTS
       cartProducts[productIndex].quantity -= 1
       newCartProducts = cartProducts
-      setCartProducts(cartProducts)
 
       // DECREMENT THE NUMBER OF PRODUCTS IN CART
       numOfCarts = numOfProducsInCart - 1
-      setNumOfProducsInCart(numOfCarts)
+
+      dispatch({type:cartReducerCases.EDIT_PRODUCTS_AND_NUMBER_OF_THEM,payload:{
+        products:newCartProducts , numOfProducts:numOfCarts
+      }})
 
       // SAVE THE NEW PRODUCTS DATA IN FIRESTORE
       saveData(newCartProducts,numOfCarts)
@@ -94,12 +97,14 @@ export default function CartContext() {
   
       cartProducts.splice(productIndex,1)
       let newCartProducts = cartProducts
-      setCartProducts(cartProducts)
   
       numOfProducsInCart -= productQuantity
       let numOfCarts = numOfProducsInCart
-      setNumOfProducsInCart(numOfProducsInCart)
   
+      dispatch({type:cartReducerCases.EDIT_PRODUCTS_AND_NUMBER_OF_THEM,payload:{
+        products:newCartProducts , numOfProducts:numOfCarts
+      }})
+
       saveData(newCartProducts,numOfCarts)
 
       toast.success('You removed the product')
@@ -140,12 +145,11 @@ export default function CartContext() {
     return total
   }
 
+
   let value = {
     numOfProducsInCart,
-    setNumOfProducsInCart,
     isDropDownOpen,
     cartProducts,
-    setCartProducts,
     changeOpenState,
     closeDropDownOnBodyClick,
     addProductToCart,
@@ -158,10 +162,12 @@ export default function CartContext() {
     let uuid = localStorage.getItem('uuid')
 
     let getCartProducts = async ()=> {
+      
       let userDocRef = doc(db,'users',uuid)
       let userDoc = await getDoc(userDocRef)
-      setNumOfProducsInCart(userDoc.data().numOfCarts)
-      setCartProducts(userDoc.data().cartProducts)
+      dispatch({type:cartReducerCases.EDIT_PRODUCTS_AND_NUMBER_OF_THEM , payload: {
+        products:userDoc.data().cartProducts , numOfProducts:userDoc.data().numOfCarts
+      }})
     }
 
     if(!user && uuid !== null) {
@@ -169,11 +175,10 @@ export default function CartContext() {
     }
 
     else {
-      setNumOfProducsInCart(0)
+      dispatch({type:cartReducerCases.NO_PRODUCTS_IN_CART})
     }
 
-  },[user,setCartProducts])
-
+  },[user])
   
   return (
     <cartContext.Provider value={value}>

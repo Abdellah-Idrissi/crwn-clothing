@@ -19,6 +19,7 @@ import Category from './routes/Category'
 
 
 let route = createBrowserRouter([
+  
   {element:<AuthContext/> , children: [
   {element:<ProductsContext/> , children: [
   {element:<CartContext/> , children: [
@@ -32,12 +33,8 @@ let route = createBrowserRouter([
       {path:'checkout', element:<Checkout/>}
     ]},
 
-
   ]}
-
-
-    ]}
-
+  ]}
   ]}
 
 ])
