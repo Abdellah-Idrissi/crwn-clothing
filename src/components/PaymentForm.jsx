@@ -26,6 +26,8 @@ function PaymentForm({amount}) {
     setIsPaymentProccessing(true)
     let response = await fetch('/.netlify/functions/payment-intent',options).then(resp=> resp.json())
 
+    console.log(response.paymentIntent)   
+
     let client_secret = response.paymentIntent.client_secret
 
     const result = await stripe.confirmCardPayment(client_secret, {
