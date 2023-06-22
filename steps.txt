@@ -1,4 +1,0 @@
-// if user not found create a user in db with a crypto uuid
-// save the cart product to db under the user's crypto uuid
-// if user logged in the crypto uuid exist in browser take its data frm db then add it to the new doc
-// delete the old doc iin db under the crypto uuid
