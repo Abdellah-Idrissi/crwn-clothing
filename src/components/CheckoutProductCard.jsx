@@ -1,11 +1,10 @@
 /* eslint-disable react/prop-types */
 import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from '@heroicons/react/24/solid'
-import { useCartContext } from '../contexts/CartContext'
+import { addProductToCart, decreaseQuantityOfProduct, removeProductFromCart } from '../store/cart/cartHandlers'
 
 
 function CheckoutProductCard({product,productIndex}) {
 
-  let {addProductToCart,decreaseQuantityOfProduct,removeProductFromCart} = useCartContext()
   let {imageUrl , quantity , name , price} = product
 
   let handleAddProductToCart = ()=> addProductToCart(product)

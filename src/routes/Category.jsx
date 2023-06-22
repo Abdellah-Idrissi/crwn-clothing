@@ -1,14 +1,12 @@
 import { useParams } from "react-router-dom"
-import { useProductsContext } from "../contexts/ProductsContext"
 import ProductCard from "../components/ProductCard"
+import { useSelector } from "react-redux"
 
 export default function Category() {
 
   let {category} = useParams()
-
-  let categories = useProductsContext()
-
-  let categoryProducts = categories[category]
+  let {products} = useSelector(state=> state.products)
+  let categoryProducts = products[category]
 
 
   return (

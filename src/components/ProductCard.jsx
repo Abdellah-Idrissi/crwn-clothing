@@ -1,16 +1,12 @@
 /* eslint-disable react/prop-types */
 import { Link } from "react-router-dom"
 import Button from "./Button"
-import { useCartContext } from "../contexts/CartContext"
-
+import { addProductToCart } from "../store/cart/cartHandlers"
 
 export default function ProductCard({product}) {
   let {imageUrl , name , price } = product
 
-  let {addProductToCart} = useCartContext()
-
   let handleAddProductToCart = ()=> addProductToCart(product)
-
 
   return (
     <Link className="flex flex-col group rounded-md overflow-hidden">

@@ -1,19 +1,21 @@
 import  bagCart from "../assets/shopping-bag.svg"
-import { useCartContext } from "../contexts/CartContext"
 import { Link } from "react-router-dom"
 import DropDownProductCard from "./DropDownProductCard"
+import { useSelector } from "react-redux"
+import { changeOpenState } from "../store/cart/cartHandlers"
 
 
 export default function Cart() {
-  let {isDropDownOpen , changeOpenState,cartProducts , numOfProducsInCart} = useCartContext()
+
+  let {numOfProductsInCart,isDropDownOpen,cartProducts} = useSelector(state=> state.cart)
 
   return (
     <>
 
       {/*----- CART -----*/}
-      <div className="relative cursor-pointer" onClick={changeOpenState}>
-        <img src={bagCart} className={`  ${numOfProducsInCart >= 100 ?  'w-[27px]'  : 'w-[22px]'}   `} alt="bag" />
-        <span className={`absolute pointer-events-none lining-nums -translate-x-1/2 -translate-y-1/2 left-1/2 top-[67%]  leading-none ${numOfProducsInCart >= 100 ?  'text-[10px]'  : 'text-[12px]'}`}>{numOfProducsInCart}</span>
+      <div className="relative cursor-pointer dropdown" onClick={changeOpenState}>
+        <img src={bagCart} className={`dropdown  ${numOfProductsInCart >= 100 ?  'w-[27px]'  : 'w-[22px]'}   `} alt="bag" />
+        <span className={`absolute dropdown pointer-events-none lining-nums -translate-x-1/2 -translate-y-1/2 left-1/2 top-[67%]  leading-none ${numOfProductsInCart >= 100 ?  'text-[10px]'  : 'text-[12px]'}`}>{numOfProductsInCart}</span>
       </div>
 
       {/*----- DROPDOWN -----*/}

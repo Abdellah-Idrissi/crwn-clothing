@@ -1,11 +1,12 @@
+import { useSelector } from "react-redux"
 import CheckoutProductCard from "../components/CheckoutProductCard"
-import { useCartContext } from "../contexts/CartContext"
+import { countTotalPrice } from "../store/cart/cartHandlers"
+import PaymentForm from "../components/PaymentForm"
 
 export default function Checkout() {
-  let {cartProducts,countTotalPrice} = useCartContext()
-
+  let cartProducts = useSelector(state=> state.cart.cartProducts)
+  
   let totalPriceOfProducts = countTotalPrice()
-
   return (
     <div className="">
       
@@ -18,6 +19,7 @@ export default function Checkout() {
             </div>
           </div>
           <p className="text-right text-[22px] lining-nums py-5 font-medium"> TOTAL: {totalPriceOfProducts}$</p>
+          <PaymentForm amount={totalPriceOfProducts}/ >
         </>   
       }
 

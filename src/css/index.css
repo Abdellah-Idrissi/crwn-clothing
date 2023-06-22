@@ -81,3 +81,9 @@ a.active {
     background-color: #333;
   }
 }
+
+
+/*-------- SWEET ALERT STYLES  --------*/
+.swal2-title {
+  @apply text-[1.8rem]
+}
